@@ -1,0 +1,20 @@
+
+
+select entry_channel
+
+	, count(distinct t3.user_id) as users_acquired
+
+    ,sum(cost_to_acquire_customer) as total_cost_of_acquisition
+
+    ,sum(cost_to_acquire_customer)/COUNT(DISTINCT t3.user_id) cost_of_acquisition_per_user
+
+    ,sum(time_spent_on_app/60) as time_spent_by_users_in_min
+
+from table_3 t3 
+
+left join (select user_id, sum(time_spent_on_app) as time_spent_on_app from table_1 group by 1) t1 
+
+on t1.user_id = t3.user_id
+
+group by 1 
+
