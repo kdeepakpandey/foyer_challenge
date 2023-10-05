@@ -1,0 +1,27 @@
+SELECT t1.product_feature
+
+	,week
+
+    ,CAST(RIGHT(week,length(week)-POSITION(' ' in week)) as int) as week_no
+
+    --,CAST(RIGHT(week,length(week)-POSITION(' ' in week)) as int) as week_number
+
+	--,cost_per_week
+
+    ,count(distinct user_id)*min(cost_per_week) as total_cost_per_week
+
+	--,sum(time_spent_on_app/60) as time_spent_in_min
+
+    --,count(distinct user_id) as no_of_users
+
+    ,round(sum(time_spent_on_app/60)*1.0/count(distinct user_id),1) as time_spent_per_user
+
+from table_1 t1
+
+left join table_2 t2
+
+on t1.product_feature = t2.product_feature
+
+group by 1,2,3
+
+order by 1,3 asc
