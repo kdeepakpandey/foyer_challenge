@@ -1,0 +1,50 @@
+with main_data as(
+
+  select *,CAST(RIGHT(week,length(week)-POSITION(' ' in week)) as int) as week_number 
+
+  from table_1
+
+)
+
+
+
+,signup as (
+
+  select user_id,MIN(week_number) as signup_week
+
+  from main_data
+
+  group by 1
+
+)
+
+,final_data as (
+
+  select md.*, s.signup_week, week_number- s.signup_week as retention_week
+
+  from main_data md
+
+  left join signup s
+
+  on s.user_id = md.user_id
+
+)
+
+
+
+select age
+
+	,count(DISTINCT  case when retention_week =0 then user_id else null end) as total_users
+
+	,count(distinct case when retention_week < 10 and retention_week >0 then user_id else null end) as "10_week_retention"
+
+	,count(distinct case when retention_week = 20  then user_id else null end) as "20_week_retention"
+
+	
+
+	--,ARRAY_AGG(distinct case when retention_week < 10 then user_id else null end) as users
+
+from final_data
+
+GROUP by 1
+
